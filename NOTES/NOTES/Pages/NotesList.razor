@@ -1,0 +1,113 @@
+﻿@page "/";
+@using NOTES.Data.DTO
+@using NOTES.Data.Domain
+@using NOTES.Repositories.Abstract
+@inject INotesCRUDService _notesCRUDService
+@inject NavigationManager _navigationManager
+
+<div class="notes">
+    <h3 class="page-label">NOTES LIST</h3>
+    @{
+        
+        if (notes == null)
+        {
+            <p>Anybody hasn't added notes yet</p>
+        }
+        else
+        {
+            @foreach (var note in notes)
+            {
+                noteId = note.NoteId;
+                model.Id = note.NoteId;
+                <div class="note">
+                    @if (openClosedNotes[noteId])
+                    {
+                        <div class="name">@note.Name</div>
+                        <div class="second-place">
+                            <div class="dates">
+                                <div class="date">Creation date: @note.CreationDate</div>
+                                <div class="date">Last modified: @note.LastUpdateDate</div>
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            <button class="btn-primary update" @onclick="() => ToggleByNoteId(note.NoteId)">SHOW</button>
+                            <div class="crud-buttun">
+                                <button class="btn-primary update" @onclick="@UpdateNoteAsync" disabled>UPDATE</button>
+                            </div>
+                            <div class="crud-button">
+                                <button class="btn-primary delete" @onclick="@DeleteNoteAsync">DELETE</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="name">
+                            <label class="name-label">@note.Name</label>
+                            <input class="name-input" type="text" for="Name" @bind="@model.Name" />
+                        </div>
+                        <div class="second-place">
+                            <div class="dates">
+                                <div class="date">Creation date: @note.CreationDate</div>
+                                <div class="date">Last modified: @note.LastUpdateDate</div>
+                            </div>
+                            <div class="note-text">
+                                <textarea class="description" @bind="@model.Description">@note.Description</textarea>
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            <button class="btn-primary update" @onclick="() => ToggleByNoteId(note.NoteId)">HIDE</button>
+                            <div class="crud-button">
+                                <button class="btn-primary update" @onclick="@UpdateNoteAsync">UPDATE</button>
+                            </div>
+                            <div class="crud-button">
+                                <button class="btn-primary delete" @onclick="@DeleteNoteAsync">DELETE</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+
+    }
+
+</div>
+@code {
+    public static List<NoteModel> notes;
+    private string noteId = "";
+    private CreateNoteModel model = new();
+    private static Dictionary<string, bool> openClosedNotes;
+
+    private void ToggleByNoteId(string noteId)
+    {
+        bool current = openClosedNotes[noteId];
+
+        openClosedNotes[noteId] = !current;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        notes = await Task.Run(async () => await _notesCRUDService.GetNotesAsync());
+        openClosedNotes = await Task.Run(() =>
+        {
+            Dictionary<string, bool> toggledDictionry = new();
+            foreach (var note in notes)
+            {
+                toggledDictionry.Add(note.NoteId, true);
+            }
+            return toggledDictionry;
+        });
+    }
+
+    protected async void DeleteNoteAsync()
+    {
+        await _notesCRUDService.DeleteNoteAsync(noteId);
+        _navigationManager.NavigateTo("/", forceLoad: true);
+    }
+
+    protected async void UpdateNoteAsync()
+    {
+        await _notesCRUDService.UpdateNoteAsync(model);
+        _navigationManager.NavigateTo("/", forceLoad: true);
+    }
+
+}

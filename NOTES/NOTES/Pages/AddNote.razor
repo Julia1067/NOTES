@@ -1,0 +1,47 @@
+﻿@page "/AddNote"
+@using NOTES.Data.DTO
+@using NOTES.Data.Domain
+@using NOTES.Repositories.Abstract
+@inject INotesCRUDService _noteCRUDService
+@inject NavigationManager _navigationManager
+
+<PageTitle></PageTitle>
+
+<h3 class="page-label">ADD NOTE</h3>
+
+<div class="row">
+    <div class="col">
+        <form>
+            <div class="inner-container">
+                <div class="form-group">
+                    <label for="Name" class="control-label">Name</label>
+                    <input for="Name" class="form-control" @bind="@obj.Name" />
+                </div>
+                <div class="form-group">
+                    <label for="Description" class="control-label">Description</label>
+                    <textarea for="Description" class="area-control" @bind="@obj.Description" />
+                </div>
+                <div class="button-group">
+                    <input type="button" class="btn btn-primary" @onclick="@CreateNote" value="Save" />
+                    <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@code {
+    CreateNoteModel obj = new();
+    protected async void CreateNote()
+    {
+        await _noteCRUDService.CreateNoteAsync(obj);
+        _navigationManager.NavigateTo("/");
+    }
+    void Cancel()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+}
+
+

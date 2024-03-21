@@ -1,18 +1,23 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager _navigationManager
 
 <PageTitle>NOTES</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
+<div style="display: grid;" class="page">
+    <div class="my-top-row">
+        <button @onclick=AddNoteRoute class="btn-primary add">AddNote</button>
+        <div class="logo">NOTES</div>
     </div>
-
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@{
+    void AddNoteRoute()
+    {
+        _navigationManager.NavigateTo("/AddNote");
+    }
+}
