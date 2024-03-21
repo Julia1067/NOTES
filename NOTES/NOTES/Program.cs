@@ -1,11 +1,22 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
+using NOTES.Data.Domain;
+using NOTES.Repositories.Abstract;
+using NOTES.Repositories.Implementation;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddDbContext<DatabaseContext>(options => options
+    .UseNpgsql(builder.Configuration
+        .GetConnectionString("conn")));
+
+builder.Services.AddTransient<INotesCRUDService, NotesCRUDService>();
 
 var app = builder.Build();
 
