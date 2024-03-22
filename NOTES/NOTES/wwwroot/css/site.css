@@ -28,6 +28,7 @@ html, body {
     color: #8a24c1;
     font-weight: bold;
     width: 6em;
+    margin-right: 2em;
 }
 
 .notes{
@@ -127,4 +128,53 @@ html, body {
     display: grid;
     justify-content: center;
     align-items: center;
+}
+
+.text-block{
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-form{
+    width: 90vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-input {
+    height: 4em;
+    width: 30vw;
+    border-radius: 3.2em;
+    padding: 0.5em;
+    background: #242424;
+    margin-right: 2em;
+    font-size: 15px;
+    color: #c8c8c8;
+}
+.search-input::placeholder{
+    font-size: 15px;
+    color: #c8c8c8
+}
+
+.search-button {
+    height: 3em;
+    width: 3em;
+    border-radius: 1.5em;
+    background: #d49dff;
+    transition: ease 0.3s;
+}
+
+.fa-magnifying-glass {
+    font-size: 1.5em;
+    color: #250039;
+}
+
+.search-button:hover {
+    background: transparent;
+    outline: 0.2em solid #909090;
+}
+
+.search-button:hover .fa-magnifying-glass {
+    color: #909090;
 }

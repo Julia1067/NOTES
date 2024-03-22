@@ -17,6 +17,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options
         .GetConnectionString("conn")));
 
 builder.Services.AddTransient<INotesCRUDService, NotesCRUDService>();
+builder.Services.AddTransient<ISearchService, SearchService>();
 
 var app = builder.Build();
 

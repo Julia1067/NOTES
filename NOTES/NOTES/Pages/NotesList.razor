@@ -3,12 +3,22 @@
 @using NOTES.Data.Domain
 @using NOTES.Repositories.Abstract
 @inject INotesCRUDService _notesCRUDService
+@inject ISearchService _searchService
 @inject NavigationManager _navigationManager
+<div class="text-block">
+    <h3 class="page-label">NOTES LIST</h3>
+    <p class="count">Notes Count: @notesCount</p>
+</div>
+
+
+<div class="search-form">
+    <input class="search-input" placeholder="Search by note name or note text piece..." name="request" type="text" @bind="textPart" />
+
+    <button class="search-button" @onclick="@SearchAsync"><i class="fa-solid fa-magnifying-glass"></i></button>
+</div>
 
 <div class="notes">
-    <h3 class="page-label">NOTES LIST</h3>
     @{
-        
         if (notes == null)
         {
             <p>Anybody hasn't added notes yet</p>
@@ -76,6 +86,26 @@
     private string noteId = "";
     private CreateNoteModel model = new();
     private static Dictionary<string, bool> openClosedNotes;
+    private string textPart = "";
+    private int notesCount = 0;
+
+    private async Task SearchAsync()
+    {
+        var notes1 = await _searchService.SearchNotesByNameAsync(textPart);
+        var notes2 = await _searchService.SearchNotesByDescriptionAsync(textPart);
+
+        if(notes1.Count != 0 && notes2.Count != 0)
+        {
+            var notes3 = notes1.Concat(notes2).ToList();
+            InitializeNotesListAsync(notes3.Distinct().ToList());
+        }
+        else if (notes1.Count != 0 && notes2.Count == 0)
+            InitializeNotesListAsync(notes1.Distinct().ToList());
+        else if (notes1.Count == 0 && notes2.Count != 0)
+            InitializeNotesListAsync(notes2.Distinct().ToList());
+        else
+            InitializeNotesListAsync(await _notesCRUDService.GetNotesAsync());
+    }
 
     private void ToggleByNoteId(string noteId)
     {
@@ -84,9 +114,15 @@
         openClosedNotes[noteId] = !current;
     }
 
+    private void InitializeNotesListAsync(List<NoteModel> notesList)
+    {
+        notes = notesList;
+        notesCount = notes.Count;
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        notes = await Task.Run(async () => await _notesCRUDService.GetNotesAsync());
+        notes = await _notesCRUDService.GetNotesAsync();
         openClosedNotes = await Task.Run(() =>
         {
             Dictionary<string, bool> toggledDictionry = new();
@@ -96,6 +132,7 @@
             }
             return toggledDictionry;
         });
+        notesCount = notes.Count;
     }
 
     protected async void DeleteNoteAsync()
