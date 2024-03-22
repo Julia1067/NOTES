@@ -4,6 +4,7 @@
 @using NOTES.Repositories.Abstract
 @inject INotesCRUDService _notesCRUDService
 @inject ISearchService _searchService
+@inject IDateService _dateService
 @inject NavigationManager _navigationManager
 <div class="text-block">
     <h3 class="page-label">NOTES LIST</h3>
@@ -27,25 +28,23 @@
         {
             @foreach (var note in notes)
             {
-                noteId = note.NoteId;
-                model.Id = note.NoteId;
                 <div class="note">
-                    @if (openClosedNotes[noteId])
+                    @if (openClosedNotes[note.NoteId])
                     {
                         <div class="name">@note.Name</div>
                         <div class="second-place">
                             <div class="dates">
-                                <div class="date">Creation date: @note.CreationDate</div>
-                                <div class="date">Last modified: @note.LastUpdateDate</div>
+                                <div class="date">Creation date: @GetDateFromCreation(note.CreationDate)</div>
+                                <div class="date">Last modified: @GetDateFromCreation(note.LastUpdateDate)</div>
                             </div>
                         </div>
                         <div class="button-container">
                             <button class="btn-primary update" @onclick="() => ToggleByNoteId(note.NoteId)">SHOW</button>
                             <div class="crud-buttun">
-                                <button class="btn-primary update" @onclick="@UpdateNoteAsync" disabled>UPDATE</button>
+                                <button class="btn-primary update" disabled>UPDATE</button>
                             </div>
                             <div class="crud-button">
-                                <button class="btn-primary delete" @onclick="@DeleteNoteAsync">DELETE</button>
+                                <button class="btn-primary delete" @onclick="() => DeleteNoteAsync(note.NoteId)">DELETE</button>
                             </div>
                         </div>
                     }
@@ -57,8 +56,8 @@
                         </div>
                         <div class="second-place">
                             <div class="dates">
-                                <div class="date">Creation date: @note.CreationDate</div>
-                                <div class="date">Last modified: @note.LastUpdateDate</div>
+                                <div class="date">Creation date: @GetDateFromCreation(note.CreationDate)</div>
+                                <div class="date">Last modified: @GetDateFromCreation(note.LastUpdateDate)</div>
                             </div>
                             <div class="note-text">
                                 <textarea class="description" @bind="@model.Description">@note.Description</textarea>
@@ -67,10 +66,10 @@
                         <div class="button-container">
                             <button class="btn-primary update" @onclick="() => ToggleByNoteId(note.NoteId)">HIDE</button>
                             <div class="crud-button">
-                                <button class="btn-primary update" @onclick="@UpdateNoteAsync">UPDATE</button>
+                                <button class="btn-primary update" @onclick="() => UpdateNoteAsync(note.NoteId)">UPDATE</button>
                             </div>
                             <div class="crud-button">
-                                <button class="btn-primary delete" @onclick="@DeleteNoteAsync">DELETE</button>
+                                <button class="btn-primary delete" @onclick="() => DeleteNoteAsync(note.NoteId)">DELETE</button>
                             </div>
                         </div>
                     }
@@ -83,11 +82,16 @@
 </div>
 @code {
     public static List<NoteModel> notes;
-    private string noteId = "";
     private CreateNoteModel model = new();
     private static Dictionary<string, bool> openClosedNotes;
     private string textPart = "";
     private int notesCount = 0;
+
+    private string GetDateFromCreation(DateTime date)
+    {
+        string result = _dateService.GetDateFromCreation(date);
+        return result;
+    }
 
     private async Task SearchAsync()
     {
@@ -135,14 +139,15 @@
         notesCount = notes.Count;
     }
 
-    protected async void DeleteNoteAsync()
+    protected async void DeleteNoteAsync(string noteId)
     {
         await _notesCRUDService.DeleteNoteAsync(noteId);
         _navigationManager.NavigateTo("/", forceLoad: true);
     }
 
-    protected async void UpdateNoteAsync()
+    protected async void UpdateNoteAsync(string noteId)
     {
+        model.Id = noteId;
         await _notesCRUDService.UpdateNoteAsync(model);
         _navigationManager.NavigateTo("/", forceLoad: true);
     }

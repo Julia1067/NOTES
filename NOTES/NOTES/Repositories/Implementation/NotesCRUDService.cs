@@ -95,7 +95,10 @@ namespace NOTES.Repositories.Implementation
                 var first = notesList.FirstOrDefault();
                 var newNote = await _dbContext.Notes.FirstOrDefaultAsync(n => n.NoteId == note.Id);
 
-                newNote.Name = note.Name;
+                if (note.Name != null)
+                {
+                    newNote.Name = note.Name;
+                }
                 newNote.Description = note.Description;
                 newNote.LastUpdateDate = DateTime.Now;
 

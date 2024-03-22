@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options
 
 builder.Services.AddTransient<INotesCRUDService, NotesCRUDService>();
 builder.Services.AddTransient<ISearchService, SearchService>();
+builder.Services.AddTransient<IDateService, DateService>();
 
 var app = builder.Build();
 

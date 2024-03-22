@@ -22,6 +22,7 @@ namespace NotesTest
             services.AddTransient<INotesCRUDService, NotesCRUDService>();
             services.AddTransient<ISearchService, SearchService>();
             services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+            services.AddTransient<IDateService, DateService>();
 
             return services.BuildServiceProvider();
         }

@@ -13,10 +13,10 @@ namespace NOTES.Data.Domain
 
         public string Description { get; set; }
 
-        [Column(TypeName = "date")]
+        [Column(TypeName = "timestamp")]
         public DateTime CreationDate { get; set; }
         
-        [Column(TypeName = "date")]
+        [Column(TypeName = "timestamp")]
         public DateTime LastUpdateDate { get; set; }
     }
 }
