@@ -14,6 +14,7 @@ NOTES site is able to help you with
 - Unit-testing
 - HTML/CSS
 
+
 # Screenshots
 ![image](https://github.com/Julia1067/NOTES/assets/96738585/5930cc16-3d09-4a64-8305-de9bb5fb294b)
 ![image](https://github.com/Julia1067/NOTES/assets/96738585/565d5b25-5172-487a-aeb6-3e8b6f07760b)
